@@ -35,29 +35,37 @@
 
 SqlNode RuleSql() :
 {
-  SqlParserPos pos;
-  SqlNode name;
-  SqlNode namespace;
-  SqlNode event;
+    SqlParserPos startPos;
+    SqlNode name;
+    SqlNode namespace;
+    SqlNode event;
+    SqlNode where;
 }
 {
   <RULE>
   {
-    pos = getPos();
+    startPos = getPos();
   }
   <NAME>
   {
-    name = StringLiteral();
+    name = SimpleIdentifier();
   }
   <NAMESPACE>
   {
-    namespace = StringLiteral();
+    namespace = SimpleIdentifier();
   }
   <EVENT>
   {
-    event = StringLiteral();
+    event = SimpleIdentifier();
   }
+  (
+    where = WhereOpt()
+    |
+    E() {
+      where = null;
+    }
+  )
   {
-    return new RuleSql(pos, name, namespace, event);
+    return new RuleSql(startPos, name, namespace, event, where);
   }
 }
